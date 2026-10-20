@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaCart | Online Shopping</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header" id="home">
+    <h1 class="logo">NovaCart ✦</h1>
+
+    <nav aria-label="Main navigation">
+      <a href="#home">Home</a>
+      <a href="#productSection">Products</a>
+      <button
+        type="button"
+        class="contact-trigger"
+        onclick="document.getElementById('contactDialog').showModal()"
+      >
+        Contact
+      </button>
+    </nav>
+
+    <button id="cartButton" type="button">
+      🛒 Cart: <span id="cartCount">0</span>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h2>Find something you'll love.</h2>
+        <p>Explore products for the whole family.</p>
+      </div>
+    </section>
+
+    <section id="productSection" class="products-section">
+      <h2>Discover Products</h2>
+      <p class="section-description">
+        Search for a product or choose a category.
+      </p>
+
+      <label class="search-label" for="searchInput">Search products</label>
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Try saree, shoes, toys..."
+        autocomplete="off"
+      >
+
+      <div id="categoryFilters" aria-label="Product categories"></div>
+      <p id="resultCount"></p>
+      <p id="noResults" hidden>No matching products. Try another search.</p>
+      <p id="message" aria-live="polite"></p>
+
+      <div id="productGrid"></div>
+    </section>
+
+    <section id="cartDetails" hidden></section>
+  </main>
+
+  <dialog id="contactDialog" class="contact-dialog">
+    <form method="dialog" class="contact-dialog-close">
+      <button type="submit" aria-label="Close">×</button>
+    </form>
+
+    <h2>Contact Us</h2>
+    <p>Have a question? Get in touch with us.</p>
+    <p>Email: <a href="mailto:udaya@gmail.com">udaya@gmail.com</a></p>
+    <p>Phone: <a href="tel:9966102917">9966102917</a></p>
+  </dialog>
+
+  <footer>
+    <p>© 2026 NovaCart. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

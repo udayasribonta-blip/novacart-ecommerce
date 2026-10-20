@@ -1,0 +1,153 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: #20372c;
+  background: linear-gradient(120deg, #e9f5ed, #fff0f5);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.checkout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 5%;
+  background: #fff;
+  box-shadow: 0 3px 14px rgba(25, 55, 38, 0.08);
+}
+
+.checkout-header h1 {
+  margin: 0;
+  color: #378b63;
+  font-size: 26px;
+}
+
+.checkout-header a {
+  color: #246747;
+  text-decoration: none;
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  width: min(1100px, 92%);
+  margin: 36px auto;
+  align-items: start;
+}
+
+.checkout-card {
+  padding: 26px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(29, 67, 46, 0.08);
+}
+
+.checkout-card h2 {
+  margin-top: 0;
+}
+
+#checkoutForm {
+  display: grid;
+  gap: 10px;
+}
+
+#checkoutForm label {
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+#checkoutForm input,
+#checkoutForm textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d8e8dc;
+  border-radius: 9px;
+  font: inherit;
+}
+
+#checkoutForm input:focus,
+#checkoutForm textarea:focus {
+  outline: 2px solid #9ac9aa;
+}
+
+.payment-choice {
+  margin: 14px 0;
+  padding: 14px;
+  border-radius: 10px;
+  background: #e9f5ed;
+}
+
+.payment-choice p {
+  margin: 6px 0 0;
+}
+
+.place-order-button {
+  border: 0;
+  border-radius: 10px;
+  padding: 13px;
+  color: #fff;
+  background: #378b63;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.place-order-button:hover {
+  background: #246747;
+}
+
+.checkout-product {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #d8e8dc;
+}
+
+.checkout-product img {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.checkout-product p {
+  margin: 3px 0;
+  color: #718078;
+}
+
+#checkoutTotal {
+  color: #246747;
+}
+
+.confirmation {
+  padding: 18px;
+  border-radius: 10px;
+  color: #246747;
+  background: #e9f5ed;
+}
+
+.confirmation h2 {
+  margin-top: 0;
+}
+
+@media (max-width: 700px) {
+  .checkout-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .checkout-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-card {
+    padding: 20px;
+  }
+}
