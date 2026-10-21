@@ -3,79 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6fbf7">
   <title>NovaCart | Online Shopping</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
+  <script src="supabase-config.js" defer></script>
+  <script src="backend.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
-
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
   <header class="site-header" id="home">
-    <h1 class="logo">NovaCart ✦</h1>
-
+    <a class="logo" href="#home" aria-label="NovaCart home">NovaCart <span>✦</span></a>
     <nav aria-label="Main navigation">
-      <a href="#home">Home</a>
-      <a href="#productSection">Products</a>
-      <button
-        type="button"
-        class="contact-trigger"
-        onclick="document.getElementById('contactDialog').showModal()"
-      >
-        Contact
-      </button>
+      <a href="#home">Home</a><a href="#trending">Trending</a><a href="#productSection">Products</a>
     </nav>
-
-    <button id="cartButton" type="button">
-      🛒 Cart: <span id="cartCount">0</span>
-    </button>
+    <div class="header-tools">
+      <label class="header-search" aria-label="Search products"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search products…" autocomplete="off"></label>
+      <button class="tool-button" id="notificationButton" type="button" aria-label="Notifications">🔔<span class="notification-dot" id="notificationDot" hidden></span></button>
+      <button class="tool-button" id="wishlistButton" type="button">♡ <span>Wishlist</span></button>
+      <button class="tool-button cart-button" id="cartButton" type="button">🛒 <span>Cart</span> <b id="cartCount">0</b></button>
+      <button class="tool-button" id="accountButton" type="button">Sign in</button>
+      <button class="tool-button theme-button" id="themeButton" type="button" aria-label="Switch to dark theme">☾</button>
+    </div>
   </header>
 
   <main>
     <section class="hero">
-      <div>
-        <h2>Find something you'll love.</h2>
-        <p>Explore products for the whole family.</p>
-      </div>
+      <div class="hero-copy"><span class="eyebrow">A little something for everyone</span><h1>Find something<br><em>you'll love.</em></h1><p>Discover fresh picks for your style, home, and everyday life.</p><a class="primary-link" href="#productSection">Explore the collection <span>→</span></a></div>
+      <div class="hero-art" aria-hidden="true"><div class="hero-orbit orbit-a"></div><div class="hero-orbit orbit-b"></div><div class="hero-cube">✦</div><div class="hero-spark spark-a">✧</div><div class="hero-spark spark-b">✦</div><div class="hero-tag">CURATED<br>FOR YOU</div></div>
     </section>
 
-    <section id="productSection" class="products-section">
-      <h2>Discover Products</h2>
-      <p class="section-description">
-        Search for a product or choose a category.
-      </p>
+    <section id="trending" class="section-block trending-section"><div class="section-heading"><div><span class="eyebrow">Popular right now</span><h2>Trending picks <span class="fire">↗</span></h2></div><a href="#productSection" class="text-link">Shop all products →</a></div><div id="trendingGrid" class="trending-grid"></div></section>
 
-      <label class="search-label" for="searchInput">Search products</label>
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Try saree, shoes, toys..."
-        autocomplete="off"
-      >
-
-      <div id="categoryFilters" aria-label="Product categories"></div>
-      <p id="resultCount"></p>
-      <p id="noResults" hidden>No matching products. Try another search.</p>
-      <p id="message" aria-live="polite"></p>
-
-      <div id="productGrid"></div>
+    <section id="productSection" class="section-block products-section">
+      <div class="section-heading"><div><span class="eyebrow">The NovaCart edit</span><h2>Discover products</h2><p class="section-description">Find a favorite, save it for later, or explore the details.</p></div></div>
+      <div id="categoryFilters" class="category-filters" aria-label="Product categories"></div>
+      <div class="results-toolbar"><p id="resultCount" aria-live="polite"></p><label class="sort-control">Sort by <select id="sortSelect"><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="rating">Top rated</option></select></label></div>
+      <p id="noResults" hidden>No matching products. Try another search.</p><p id="message" aria-live="polite"></p><div id="productGrid" class="product-grid"></div>
     </section>
-
-    <section id="cartDetails" hidden></section>
   </main>
 
-  <dialog id="contactDialog" class="contact-dialog">
-    <form method="dialog" class="contact-dialog-close">
-      <button type="submit" aria-label="Close">×</button>
-    </form>
+  <div id="cartDetails" class="overlay" hidden></div>
+  <div id="wishlistDetails" class="overlay" hidden></div>
+  <aside id="notificationPanel" class="notification-panel" hidden aria-label="Notifications"></aside>
 
-    <h2>Contact Us</h2>
-    <p>Have a question? Get in touch with us.</p>
-    <p>Email: <a href="mailto:udaya@gmail.com">udaya@gmail.com</a></p>
-    <p>Phone: <a href="tel:9966102917">9966102917</a></p>
-  </dialog>
-
-  <footer>
-    <p>© 2026 NovaCart. All rights reserved.</p>
-  </footer>
-
+  <dialog id="productDialog" class="app-dialog product-dialog"><button type="button" class="dialog-x" data-close="productDialog" aria-label="Close">×</button><div id="productDialogBody"></div></dialog>
+  <dialog id="accountDialog" class="app-dialog"><button type="button" class="dialog-x" data-close="accountDialog" aria-label="Close">×</button><div id="accountDialogBody"></div></dialog>
+  <dialog id="careDialog" class="app-dialog"><button type="button" class="dialog-x" data-close="careDialog" aria-label="Close">×</button><span class="eyebrow">We're here to help</span><h2>NovaCart customer care</h2><p>Sign in to send a message to NovaCart support, or email us.</p><form id="careForm" class="dialog-form"><label>Your message<textarea id="careMessage" rows="4" required placeholder="How can we help?"></textarea></label><button class="primary-button" type="submit">Send message</button></form><p class="care-email">Email: <a href="mailto:udaya@gmail.com">udaya@gmail.com</a></p><p id="careStatus" class="form-status" aria-live="polite"></p></dialog>
+  <button class="care-fab" id="careButton" type="button" aria-label="Open customer care">☏ <span>Need help?</span></button>
+  <footer><a class="logo footer-logo" href="#home">NovaCart <span>✦</span></a><p>© 2026 NovaCart · Shop with a little more joy.</p><button type="button" class="footer-care" id="footerCare">Customer care</button></footer>
 </body>
 </html>
+
+
+
+
