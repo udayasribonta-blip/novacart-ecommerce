@@ -3,7 +3,7 @@ function addProducts(prefix, names, category, basePrice, subcategory = "") {
   names.forEach((name, index) => catalog.push({
     name, category, subcategory, price: basePrice + (index % 5) * 100,
     image: `Product images/${prefix}${index + 1}.jpg`,
-    keywords: `${name} ${category} ${subcategory} shopping fashion`,
+    keywords: `${name} ${category} ${subcategory}`,
     rating: Number((4.2 + ((catalog.length * 7) % 8) / 10).toFixed(1)),
     reviewCount: 12 + ((catalog.length * 11) % 83)
   }));
@@ -64,9 +64,25 @@ function showCategories() {
   if(subcats) html+=`<span class="subcategory-heading">${esc(selectedCategory)}:</span>`+subcats.map(s=>`<button class="category-button subcategory-button ${s===selectedSubcategory?"active":""}" data-subcategory="${esc(s)}">${esc(s)}</button>`).join("");
   categoryFilters.innerHTML=html;
 }
+function normalizeSearchText(value) {
+  return String(value||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+}
+function searchWordForms(word) {
+  const forms=new Set([word]);
+  if(word.length>4&&word.endsWith("ies")) forms.add(`${word.slice(0,-3)}y`);
+  if(word.length>3&&word.endsWith("es")) forms.add(word.slice(0,-2));
+  if(word.length>3&&word.endsWith("s")) forms.add(word.slice(0,-1));
+  if(word==="sari"||word==="saris") { forms.add("saree"); forms.add("sarees"); }
+  if(word==="saree"||word==="sarees") { forms.add("sari"); forms.add("saris"); }
+  return [...forms];
+}
 function matchingProducts() {
-  const term=searchInput.value.toLowerCase().trim();
-  const found=catalog.filter(p=>`${p.name} ${p.category} ${p.subcategory||""} ${p.keywords}`.toLowerCase().includes(term)&& (selectedCategory==="All"||p.category===selectedCategory) && (!subcategoryOptions[selectedCategory]||selectedSubcategory==="All"||p.subcategory===selectedSubcategory));
+  const words=normalizeSearchText(searchInput.value).split(/\s+/).filter(Boolean);
+  const found=catalog.filter(p=>{
+    const searchable=normalizeSearchText(`${p.name} ${p.category} ${p.subcategory||""} ${p.keywords||""}`);
+    const matchesText=words.every(word=>searchWordForms(word).some(form=>searchable.includes(form)));
+    return matchesText && (selectedCategory==="All"||p.category===selectedCategory) && (!subcategoryOptions[selectedCategory]||selectedSubcategory==="All"||p.subcategory===selectedSubcategory);
+  });
   const sort=sortSelect.value;
   if(sort==="price-low") found.sort((a,b)=>a.price-b.price);
   else if(sort==="price-high") found.sort((a,b)=>b.price-a.price);
@@ -77,7 +93,7 @@ function matchingProducts() {
 function showSearchResults(found) {
   const term=searchInput.value.trim();
   if(!term){searchResults.hidden=true;searchResults.innerHTML="";return;}
-  if(!found.length){searchResults.innerHTML='<p class="search-empty">No matching products</p>';searchResults.hidden=false;return;}
+  if(!found.length){searchResults.innerHTML='<p class="search-empty" role="status">No matching products</p>';searchResults.hidden=false;return;}
   searchResults.innerHTML=found.map(p=>`<button type="button" class="search-result" role="option" data-open-product="${esc(p.name)}"><img src="${esc(p.image)}" alt="" onerror="this.hidden=true"><span class="search-result-copy"><strong>${esc(p.name)}</strong><small>${esc(p.category)}</small></span><span class="search-result-price">${money(p.price)}</span></button>`).join("");
   searchResults.hidden=false;
 }
@@ -112,7 +128,7 @@ function openAccount() { accountDialogBody.innerHTML=`<span class="eyebrow">Your
 function resizeImage(file) { return new Promise((resolve,reject)=>{if(!file||!file.size)return resolve("");const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{const scale=Math.min(1,640/Math.max(img.width,img.height)),canvas=document.createElement("canvas");canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);URL.revokeObjectURL(url);resolve(canvas.toDataURL("image/jpeg",.68));};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("Could not read that image."));};img.src=url;}); }
 
 categoryFilters.addEventListener("click",e=>{const c=e.target.closest("[data-category]"),s=e.target.closest("[data-subcategory]");if(c){selectedCategory=c.dataset.category;selectedSubcategory="All";showCategories();showProducts();}else if(s){selectedSubcategory=s.dataset.subcategory;showCategories();showProducts();}});
-searchInput.addEventListener("input",()=>{selectedCategory="All";selectedSubcategory="All";showCategories();showProducts();});searchInput.addEventListener("focus",()=>{if(searchInput.value.trim())showProducts();});searchInput.addEventListener("keydown",e=>{if(e.key==="Escape"){searchResults.hidden=true;searchInput.blur();}else if(e.key==="Enter"){e.preventDefault();showProducts();}});sortSelect.addEventListener("change",showProducts);
+searchInput.addEventListener("input",()=>{selectedCategory="All";selectedSubcategory="All";showCategories();showProducts();});searchInput.addEventListener("focus",()=>{if(searchInput.value.trim())showProducts();});searchInput.addEventListener("keydown",e=>{if(e.key==="Escape"){searchResults.hidden=true;searchInput.blur();}else if(e.key==="Enter"){e.preventDefault();}});sortSelect.addEventListener("change",showProducts);
 function handleProductClick(e) { const heart=e.target.closest("[data-wishlist]");if(heart){e.stopPropagation();toggleWishlist(heart.dataset.wishlist);if(productDialog.open&&currentProduct){productDialog.close();showProduct(currentProduct);}return;}const add=e.target.closest("[data-add-cart]");if(add){e.stopPropagation();addToCart(add.dataset.addCart);if(productDialog.open)productDialog.close();return;}const buy=e.target.closest("[data-buy-now]");if(buy){e.stopPropagation();addToCart(buy.dataset.buyNow);location.href="checkout.html";return;}const target=e.target.closest("[data-open-product]");if(target){searchResults.hidden=true;showProduct(target.dataset.openProduct);}}
 productGrid.addEventListener("click",handleProductClick);trendingGrid.addEventListener("click",handleProductClick);productDialogBody.addEventListener("click",handleProductClick);wishlistDetails.addEventListener("click",handleProductClick);searchResults.addEventListener("click",handleProductClick);
 [productGrid,trendingGrid].forEach(grid=>grid.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-open-product]")){e.preventDefault();showProduct(e.target.dataset.openProduct);}}));
